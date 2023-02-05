@@ -35,11 +35,31 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   // create a new tag
+  Tag.create(req.body)
+    .then((tag) => {
+      if (req.body.productIds.length) {
+        const productIdArr = req.body.productIds.map((product_id) => {
+          return {
+            tag_id: tag.id,
+            product_id,
+          };
+        });
+        return ProductTag.bulkCreate(productIdArr);
+      }
+      // if no product tags,  respond ok
+      res.status(200).json(tag);
+    })
+    .then((data) => res.status(200).json(data))
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json(err);
+    });
   
 });
 
 router.put('/:id', async (req, res) => {
   // update a tag's name by its `id` value
+  
   
 });
 
